@@ -182,3 +182,166 @@
     border-right-color: var(--border);
   }
 }
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px;
+  background: #f8fafc;
+}
+
+.todo-panel {
+  width: min(760px, 100%);
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.08);
+  padding: 32px;
+}
+
+.todo-panel h1 {
+  margin: 0 0 18px;
+  font-size: 2rem;
+  color: #111827;
+}
+
+.todo-form {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.todo-form label {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.todo-form input,
+.todo-form textarea,
+.todo-item input,
+.todo-item textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font: inherit;
+  color: #111827;
+  background: #f8fafc;
+}
+
+.todo-form textarea,
+.todo-item textarea {
+  resize: vertical;
+}
+
+.add-button,
+.edit-button,
+.delete-button,
+.save-button,
+.cancel-button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.add-button {
+  width: fit-content;
+  background: #2563eb;
+  color: white;
+}
+
+.add-button:hover,
+.edit-button:hover,
+.delete-button:hover,
+.save-button:hover,
+.cancel-button:hover {
+  transform: translateY(-1px);
+}
+
+.todo-list {
+  display: grid;
+  gap: 16px;
+}
+
+.empty-state {
+  margin: 0;
+  color: #6b7280;
+}
+
+.todo-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 20px;
+  background: #ffffff;
+}
+
+.todo-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.todo-content h2 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  color: #111827;
+}
+
+.todo-content p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.edit-button {
+  background: #fbbf24;
+  color: #111827;
+}
+
+.delete-button {
+  background: #ef4444;
+  color: white;
+}
+
+.save-button {
+  background: #10b981;
+  color: white;
+}
+
+.cancel-button {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.todo-edit {
+  display: grid;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 24px 16px;
+  }
+
+  .todo-content {
+    flex-direction: column;
+  }
+
+  .item-actions {
+    justify-content: flex-start;
+  }
+}
