@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import type { Todo, TodoDraft } from './models/todo';
+import { supabase } from './infrastructure/supabase-client';
 import TodoItem from './components/TodoItem';
 import TodoForm from './components/TodoForm';
 
@@ -8,37 +9,26 @@ import TodoForm from './components/TodoForm';
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
 
-  const addTodo = (draft: TodoDraft) => {
+  const addTodo = async (draft: TodoDraft) => {
     if (!draft.name.trim()) return
+    if (!draft.description.trim()) return
 
-    const newTodo: Todo = {
-      id: crypto.randomUUID(),
+    const newTodo: Partial<Todo> = {
       name: draft.name.trim(),
-      description: draft.description.trim(),
-      isEditing: false,
+      description: draft.description.trim()
     }
 
-    setTodos((current) => [newTodo, ...current])
+    const { data, error } = await supabase.from('todos').insert(newTodo).select().single();
+    if (error) {
+      console.error('Error adding todo:', error.message);
+      return;
+    }
+    console.log('Todo added:', data);
+    setTodos((current) => [data, ...current])
   }
 
   const deleteTodo = (id: string) => {
     setTodos((current) => current.filter((todo) => todo.id !== id))
-  }
-
-  const enableEdit = (id: string) => {
-    setTodos((current) =>
-      current.map((todo) =>
-        todo.id === id ? { ...todo, isEditing: true } : todo,
-      ),
-    )
-  }
-
-  const cancelEdit = (id: string) => {
-    setTodos((current) =>
-      current.map((todo) =>
-        todo.id === id ? { ...todo, isEditing: false } : todo,
-      ),
-    )
   }
 
   const saveTodo = (id: string, name: string, description: string) => {
@@ -74,8 +64,6 @@ function App() {
                 key={todo.id}
                 todo={todo}
                 onDelete={() => deleteTodo(todo.id)}
-                onEdit={() => enableEdit(todo.id)}
-                onCancel={() => cancelEdit(todo.id)}
                 onSave={saveTodo}
               />
             ))

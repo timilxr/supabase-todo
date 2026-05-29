@@ -4,22 +4,21 @@ import type { Todo } from "../models/todo";
 export type TodoItemProps = {
   readonly todo: Todo
   readonly onDelete: () => void
-  readonly onEdit: () => void
-  readonly onCancel: () => void
   readonly onSave: (id: string, name: string, description: string) => void
 }
-function TodoItem({ todo, onDelete, onEdit, onCancel, onSave }: TodoItemProps) {
+function TodoItem({ todo, onDelete, onSave }: TodoItemProps) {
   const [name, setName] = useState(todo.name)
   const [description, setDescription] = useState(todo.description)
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     setName(todo.name)
     setDescription(todo.description)
-  }, [todo.name, todo.description, todo.isEditing])
+  }, [todo.name, todo.description])
 
   return (
     <article className="todo-item">
-      {todo.isEditing ? (
+      {isEditing ? (
         <div className="todo-edit">
           <input
             type="text"
@@ -37,7 +36,7 @@ function TodoItem({ todo, onDelete, onEdit, onCancel, onSave }: TodoItemProps) {
             <button type="button" className="save-button" onClick={() => onSave(todo.id, name, description)}>
               Save
             </button>
-            <button type="button" className="cancel-button" onClick={onCancel}>
+            <button type="button" className="cancel-button" onClick={() => setIsEditing(false)}>
               Cancel
             </button>
           </div>
@@ -46,10 +45,11 @@ function TodoItem({ todo, onDelete, onEdit, onCancel, onSave }: TodoItemProps) {
           <div className="todo-content">
             <div>
               <h2>{todo.name}</h2>
-              <p>{todo.description || 'No description provided.'}</p>
+              <p>{todo.description}</p>
+              <span>{todo.created_at}</span>
             </div>
             <div className="item-actions">
-              <button type="button" className="edit-button" onClick={onEdit}>
+              <button type="button" className="edit-button" onClick={() => setIsEditing(true)}>
                 Edit
               </button>
               <button type="button" className="delete-button" onClick={onDelete}>

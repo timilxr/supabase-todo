@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { TodoDraft } from "../models/todo";
 
 export type TodoFormProps = {
-  addTodo: (draft: TodoDraft) => void
+  addTodo: (draft: TodoDraft) => Promise<void>
 }
 
 const initialDraft: TodoDraft = {
@@ -13,13 +13,14 @@ const initialDraft: TodoDraft = {
 const TodoForm = ({ addTodo }: TodoFormProps) => {
   const [draft, setDraft] = useState<TodoDraft>(initialDraft);
 
-  const handleAddTodo = () => {
-    addTodo(draft);
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await addTodo(draft);
     setDraft(initialDraft);
   }
 
   return (
-    <div className="todo-form">
+    <form className="todo-form" onSubmit={handleSubmit}>
           <label>
             Name
             <input
@@ -45,10 +46,10 @@ const TodoForm = ({ addTodo }: TodoFormProps) => {
               rows={3}
             />
           </label>
-          <button type="button" className="add-button" onClick={handleAddTodo}>
+          <button type="submit" className="add-button">
             Add Todo
           </button>
-        </div>
+        </form>
   )
 }
 
