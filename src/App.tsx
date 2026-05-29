@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import type { Todo, TodoDraft } from './models/todo';
 import { supabase } from './infrastructure/supabase-client';
@@ -7,7 +7,22 @@ import TodoForm from './components/TodoForm';
 
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const fetchTodos = async () => {
+    const {data, error} = await supabase.from('todos').select('*').order('created_at', { ascending: false});
+
+    if(error){
+      console.error('Error fetching todos:', error.message);
+      return;
+    }
+    console.log('Fetched todos:', data);
+    setTodos(data);
+  }
+
+  useEffect(()=>{
+    fetchTodos();
+  }, [])
 
   const addTodo = async (draft: TodoDraft) => {
     if (!draft.name.trim()) return
@@ -27,12 +42,25 @@ function App() {
     setTodos((current) => [data, ...current])
   }
 
-  const deleteTodo = (id: string) => {
+  const deleteTodo = async (id: string) => {
+    const {error } = await supabase.from('todos').delete().eq('id', id);
+    if (error) {
+      console.error('Error deleting todo:', error.message);
+      return;
+    }
     setTodos((current) => current.filter((todo) => todo.id !== id))
   }
 
-  const saveTodo = (id: string, name: string, description: string) => {
-    if (!name.trim()) return
+  const updateTodo = async (id: string, name: string, description: string) => {
+    if (!id) return
+    if (!description) return
+    if (!name) return
+
+    const { error } = await supabase.from('todos').update({ name: name.trim(), description: description.trim() }).eq('id', id);
+    if (error) {
+      console.error('Error updating todo:', error.message);
+      return;
+    }
 
     setTodos((current) =>
       current.map((todo) =>
@@ -40,8 +68,7 @@ function App() {
           ? {
               ...todo,
               name: name.trim(),
-              description: description.trim(),
-              isEditing: false,
+              description: description.trim()
             }
           : todo,
       ),
@@ -64,7 +91,7 @@ function App() {
                 key={todo.id}
                 todo={todo}
                 onDelete={() => deleteTodo(todo.id)}
-                onSave={saveTodo}
+                onUpdate={updateTodo}
               />
             ))
           )}

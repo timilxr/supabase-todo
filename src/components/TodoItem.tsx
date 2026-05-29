@@ -4,9 +4,9 @@ import type { Todo } from "../models/todo";
 export type TodoItemProps = {
   readonly todo: Todo
   readonly onDelete: () => void
-  readonly onSave: (id: string, name: string, description: string) => void
+  readonly onUpdate: (id: string, name: string, description: string) => Promise<void>
 }
-function TodoItem({ todo, onDelete, onSave }: TodoItemProps) {
+function TodoItem({ todo, onDelete, onUpdate }: TodoItemProps) {
   const [name, setName] = useState(todo.name)
   const [description, setDescription] = useState(todo.description)
   const [isEditing, setIsEditing] = useState(false);
@@ -15,6 +15,11 @@ function TodoItem({ todo, onDelete, onSave }: TodoItemProps) {
     setName(todo.name)
     setDescription(todo.description)
   }, [todo.name, todo.description])
+
+  const onSave = async () => {
+    await onUpdate(todo.id, name, description)
+    setIsEditing(false)
+  }
 
   return (
     <article className="todo-item">
@@ -33,7 +38,7 @@ function TodoItem({ todo, onDelete, onSave }: TodoItemProps) {
             aria-label="Edit todo description"
           />
           <div className="item-actions">
-            <button type="button" className="save-button" onClick={() => onSave(todo.id, name, description)}>
+            <button type="button" className="save-button" onClick={onSave}>
               Save
             </button>
             <button type="button" className="cancel-button" onClick={() => setIsEditing(false)}>
